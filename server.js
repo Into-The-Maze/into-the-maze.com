@@ -12,21 +12,33 @@ app.use(express.json());
 // API Endpoints
 
 app.post('/api/subscribe', async (req, res) => {
+  console.log('Subscribe hit');
+  console.log('API key present:', !!process.env.RESEND_API_KEY);
+  console.log('Body:', req.body);
+
+  if (!process.env.RESEND_API_KEY) {
+    return res.status(500).json({ error: 'Missing API key' });
+  }
+
   const { email } = req.body;
-  print(email)
-  if (!email || !email.includes('@')) return res.status(400).json({ error: 'Invalid email' });
+  if (!email || !email.includes('@')) {
+    return res.status(400).json({ error: 'Invalid email' });
+  }
+
   try {
+    console.log('Creating contact...');
     const { data, error } = await resend.contacts.create({
       email,
       firstName: '',
       lastName: '',
       unsubscribed: false,
     });
-    if (error) {
-      console.error('Contact error:', JSON.stringify(error));
-      return res.status(500).json({ error: 'Failed to subscribe' });
-    }
-    await resend.emails.send({
+    console.log('Contact result - data:', JSON.stringify(data), 'error:', JSON.stringify(error));
+
+    if (error) return res.status(500).json({ error: 'Failed to subscribe', detail: error });
+
+    console.log('Sending email...');
+    const { data: emailData, error: emailError } = await resend.emails.send({
       from: 'Into The Maze <dylan@intothemaze.com>',
       to: email,
       subject: "You're in the maze now.",
@@ -34,10 +46,14 @@ app.post('/api/subscribe', async (req, res) => {
              <p>You'll hear about the maze.</p>
              <p>— Dylan & Jonty</p>`,
     });
+    console.log('Email result - data:', JSON.stringify(emailData), 'error:', JSON.stringify(emailError));
+
+    if (emailError) return res.status(500).json({ error: 'Failed to send email', detail: emailError });
+
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error('Server error:', err);
-    return res.status(500).json({ error: 'Server error' });
+    console.error('Caught exception:', err.message, err.stack);
+    return res.status(500).json({ error: 'Server error', detail: err.message });
   }
 });
 // END
