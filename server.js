@@ -6,7 +6,9 @@ app.use(express.static('client'));
 app.use(express.json());
 
 // API Endpoints
-
+app.get('/', (_, res) => {
+  res.sendFile('client/index.html');
+});
 
 
 // END
