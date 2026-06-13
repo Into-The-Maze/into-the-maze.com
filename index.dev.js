@@ -222,16 +222,35 @@ document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
 /* ──────────────────────────────────────────────────────────
    6. MAILING LIST FORMS
 ────────────────────────────────────────────────────────── */
-function handleMailingSubmit(e, successId) {
-    e.preventDefault();
-    const form  = e.target;
-    const input = form.querySelector('input[type="email"]');
-    const msg   = document.getElementById(successId);
-    // TODO: wire up to Mailchimp / ConvertKit / etc.
-    input.value = '';
-    input.disabled = true;
-    form.querySelectorAll('button').forEach(b => b.disabled = true);
-    if (msg) msg.classList.add('show');
+async function handleMailingSubmit(e, successId) {
+  e.preventDefault();
+  const form = e.target;
+  const input = form.querySelector('input[type="email"]');
+  const email = input.value;
+  const successEl = document.getElementById(successId);
+
+  try {
+    const res = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+
+    if (res.ok || res.status === 409) { // 409 = already subscribed, still show success
+      input.value = '';
+      input.disabled = true;
+      form.querySelectorAll('button').forEach(b => b.disabled = true);
+      if (successEl) successEl.classList.add('show');
+    } else {
+      input.setCustomValidity('Something went wrong, try again.');
+      input.reportValidity();
+      input.setCustomValidity('');
+    }
+  } catch {
+    input.setCustomValidity('Something went wrong, try again.');
+    input.reportValidity();
+    input.setCustomValidity('');
+  }
 }
 
 
