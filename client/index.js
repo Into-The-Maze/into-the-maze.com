@@ -239,7 +239,7 @@ function handleMailingSubmit(e, successId) {
    7. FOOTER YEAR
 ────────────────────────────────────────────────────────── */
 const yearEl = document.getElementById('year');
-if (yearEl) yearEl.textContent = new Date().getFullYear();
+if (yearEl) yearEl.textContent = '2026'
 
 
 /* ──────────────────────────────────────────────────────────
