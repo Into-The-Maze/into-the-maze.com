@@ -20,7 +20,7 @@ app.post('/api/subscribe', async (req, res) => {
     if (error) return res.status(500).json({ error: 'Failed to subscribe' });
 
     await resend.emails.send({
-      from: 'Into The Maze <news@intothemaze.com>',
+      from: 'Into The Maze <dylan@intothemaze.com>',
       to: email,
       subject: "You're in the maze now.",
       html: `<p>You're on the list.</p>
