@@ -14,6 +14,7 @@ convention:
   - chore    # Miscellaneous commits e.g. modifying `.gitignore`
   - merge
   - revert
+  - slop     # Vibe code / AI slop
   commitScopes: []
   releaseTagGlobPattern: v[0-9]*.[0-9]*.[0-9]*
 changelog:
