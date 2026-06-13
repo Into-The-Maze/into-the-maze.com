@@ -236,13 +236,6 @@ function handleMailingSubmit(e, successId) {
 
 
 /* ──────────────────────────────────────────────────────────
-   7. FOOTER YEAR
-────────────────────────────────────────────────────────── */
-const yearEl = document.getElementById('year');
-if (yearEl) yearEl.textContent = '2026'
-
-
-/* ──────────────────────────────────────────────────────────
    8. SMOOTH SCROLL for anchor links
 ────────────────────────────────────────────────────────── */
 document.querySelectorAll('a[href^="#"]').forEach(a => {
