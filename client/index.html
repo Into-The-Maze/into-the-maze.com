@@ -5,12 +5,240 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <title>Into The Maze</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=JetBrains+Mono:wght@800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Into The Maze Games</title>
 </head>
 <body>
 
+    <!-- ░░ NAVIGATION ░░ -->
+    <nav class="nav" id="nav">
+        <div class="nav-logo">
+            <span class="nav-logo-icon">⬡</span>
+            <span>Into The Maze</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#mailing">Newsletter</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
 
+    <!-- ░░ HERO ░░ -->
+    <section class="hero" id="hero">
 
+        <!-- Generated recursive-backtracker maze on canvas -->
+        <canvas class="maze-canvas" id="mazeCanvas" aria-hidden="true"></canvas>
+
+        <!-- Particle field -->
+        <div class="particles" id="particles"></div>
+
+        <!-- Hero content -->
+        <div class="hero-content">
+            <p class="hero-eyebrow">Independent Game Development Studio</p>
+
+            <!-- Title -->
+            <div class="hero-title-wrap">
+                <p class="title-into-the">INTO THE</p>
+                <h1 class="title-maze">MAZE</h1>
+            </div>
+
+            <p class="hero-tagline">We make amazeing games.</p>
+            <div class="hero-cta">
+                <a href="#mailing" class="btn btn-primary">Join the Mailing List</a>
+                <a href="#about" class="btn btn-ghost">Our Story</a>
+            </div>
+        </div>
+
+        <a href="#about" class="scroll-indicator" aria-label="Scroll down">
+            <div class="scroll-mouse">
+                <div class="scroll-dot"></div>
+            </div>
+            <span>Scroll</span>
+        </a>
+    </section>
+
+    <!-- ░░ ABOUT ░░ -->
+    <section class="section about" id="about">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Who We Are</span>
+                <h2 class="section-title">Jus making stuff</h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-text reveal">
+                    <p class="lead">Into The Maze Games is a indie studio obsessed with one idea: maze.
+                        We love mazes and we love making games that make you feel mazey.
+                    </p>
+                </div>
+                <div class="about-stats reveal">
+                    <div class="stat">
+                        <span class="stat-number">2023</span>
+                        <span class="stat-label">Founded</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">0</span>
+                        <span class="stat-label">Games Released</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number" id="maze-counter">8673</span>
+                        <span class="stat-label">Mazes Generated</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">2</span>
+                        <span class="stat-label">Team Members</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ░░ TEAM ░░ -->
+    <section class="section team" id="team">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">The Team</span>
+                <h2 class="section-title">The minds behind the maze.</h2>
+            </div>
+            <div class="team-grid">
+                <div class="team-card reveal">
+                    <div class="team-avatar" style="--c:#c45c1a">D</div>
+                    <h4>Dylan Thompson</h4>
+                    <p class="team-role">Co-Founder, Programmer, Designer</p>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-avatar" style="--c:#e8c49a">J</div>
+                    <h4>Jonty Ali</h4>
+                    <p class="team-role">Co-Founder, Programmer, Designer, Artist</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ░░ MAILING LIST (PROMINENT) ░░ -->
+    <section class="section mailing-section" id="mailing">
+        <div class="container">
+            <div class="mailing-hero reveal">
+                <div class="mailing-glyph" aria-hidden="true">
+                    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+                        <g stroke="#c45c1a" stroke-width="1.5" fill="none" opacity="0.9">
+                            <rect x="4" y="4" width="72" height="72"/>
+                            <rect x="18" y="18" width="44" height="44"/>
+                            <line x1="4"  y1="40" x2="18" y2="40"/>
+                            <line x1="62" y1="40" x2="76" y2="40"/>
+                            <line x1="40" y1="4"  x2="40" y2="18"/>
+                            <line x1="40" y1="62" x2="40" y2="76"/>
+                            <circle cx="40" cy="40" r="8" stroke="#e8822a"/>
+                        </g>
+                    </svg>
+                </div>
+                <h2 class="mailing-title">Enter the maze.</h2>
+                <p class="mailing-sub">Dev logs, release news, playtest invites, and early access — delivered before anyone else finds the exit.</p>
+                <form class="mailing-form-big" id="mailingFormBig" onsubmit="handleMailingSubmit(event, 'mailingSuccessBig')">
+                    <div class="mailing-big-group">
+                        <input type="email" placeholder="your@email.com" required aria-label="Email address"/>
+                        <button type="submit">
+                            <span>Subscribe</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                    <p class="mailing-note">No spam. No nonsense. Unsubscribe anytime.</p>
+                    <p class="mailing-success" id="mailingSuccessBig">You're in the maze now. ✦</p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ░░ CONTACT ░░ -->
+    <section class="section contact" id="contact">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Get In Touch</span>
+                <h2 class="section-title">Found a Maze? Go inside.</h2>
+            </div>
+            <div class="contact-list reveal">
+                <div class="contact-row">
+                    <span class="contact-row-label"><i class="fa-regular fa-envelope"></i> General &amp; Press</span>
+                    <a href="mailto:intothemazedev@gmail.com">intothemazedev@gmail.com</a>
+                </div>
+                <div class="contact-row">
+                    <span class="contact-row-label"><i class="fa-solid fa-users"></i> Join The Team</span>
+                    <a href="mailto:intothemazedev@gmail.com">intothemazedev@gmail.com</a>
+                </div>
+            </div>
+            <div class="social-links reveal">
+                <a href="#" aria-label="Twitter/X"  class="social-link"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" aria-label="Discord"    class="social-link"><i class="fa-brands fa-discord"></i></a>
+                <a href="#" aria-label="YouTube"    class="social-link"><i class="fa-brands fa-youtube"></i></a>
+                <a href="#" aria-label="Instagram"  class="social-link"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="GitHub"     class="social-link"><i class="fa-brands fa-github"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ░░ FOOTER ░░ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <span class="nav-logo-icon">⬡</span>
+                        Into The Maze Games
+                    </div>
+                    <p>Crafting mazes you lose yourself in.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Twitter/X"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-links-col">
+                    <h5>Studio</h5>
+                    <ul>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#team">Team</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-mailing">
+                    <h5>Stay in the maze</h5>
+                    <p>Miss the big signup? You can still join here.</p>
+                    <form class="mailing-form" onsubmit="handleMailingSubmit(event, 'mailingSuccessFooter')">
+                        <div class="mailing-input-group">
+                            <input type="email" placeholder="your@email.com" required aria-label="Email address"/>
+                            <button type="submit" aria-label="Subscribe">
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <p class="mailing-note">Get your maze a day.</p>
+                        <p class="mailing-success" id="mailingSuccessFooter">You're in the maze now. ✦</p>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; <span id="year"></span> Into The Maze Games Ltd. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Use</a>
+                    <a href="#">Press Kit</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="index.js"></script>
 </body>
 </html>
