@@ -13,12 +13,19 @@ app.use(express.json());
 
 app.post('/api/subscribe', async (req, res) => {
   const { email } = req.body;
+  print(email)
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'Invalid email' });
-
   try {
-    const { error } = await resend.contacts.create({ email });
-    if (error) return res.status(500).json({ error: 'Failed to subscribe' });
-
+    const { data, error } = await resend.contacts.create({
+      email,
+      firstName: '',
+      lastName: '',
+      unsubscribed: false,
+    });
+    if (error) {
+      console.error('Contact error:', JSON.stringify(error));
+      return res.status(500).json({ error: 'Failed to subscribe' });
+    }
     await resend.emails.send({
       from: 'Into The Maze <dylan@intothemaze.com>',
       to: email,
@@ -27,14 +34,12 @@ app.post('/api/subscribe', async (req, res) => {
              <p>You'll hear about the maze.</p>
              <p>— Dylan & Jonty</p>`,
     });
-
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error(err);
+    console.error('Server error:', err);
     return res.status(500).json({ error: 'Server error' });
   }
 });
-
 // END
 
 app.listen(PORT);
