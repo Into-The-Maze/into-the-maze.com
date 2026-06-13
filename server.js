@@ -16,7 +16,7 @@ app.post('/api/subscribe', async (req, res) => {
   if (!email || !email.includes('@')) return res.status(400).json({ error: 'Invalid email' });
 
   try {
-    const { error } = await resend.contacts.create({ email, unsubscribed: false });
+    const { error } = await resend.contacts.create({ email });
     if (error) return res.status(500).json({ error: 'Failed to subscribe' });
 
     await resend.emails.send({
