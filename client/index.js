@@ -1,1 +1,225 @@
-!function(){const e=document.getElementById("mazeCanvas");if(!e)return;function t(){e.width=window.innerWidth,e.height=window.innerHeight}t();const n=e.getContext("2d"),o=28,r=Math.ceil(e.width/o)+1,a=Math.ceil(e.height/o)+1,i=[2,3,0,1],l=[-1,0,1,0],s=[0,1,0,-1],c=Array.from({length:a},()=>new Array(r).fill(!1)),d=Array.from({length:a},()=>Array.from({length:r},()=>[!1,!1,!1,!1]));function u(){const e=[],t=Math.floor(Math.random()*a),n=Math.floor(Math.random()*r);for(c[t][n]=!0,e.push([t,n]);e.length>0;){const[t,n]=e[e.length-1],o=[0,1,2,3].sort(()=>Math.random()-.5);let u=!1;for(const m of o){const o=t+l[m],h=n+s[m];if(o>=0&&o<a&&h>=0&&h<r&&!c[o][h]){d[t][n][m]=!0,d[o][h][i[m]]=!0,c[o][h]=!0,e.push([o,h]),u=!0;break}}u||e.pop()}}function m(){n.clearRect(0,0,e.width,e.height),n.strokeStyle="rgba(196, 92, 26, 0.9)",n.lineWidth=1,n.lineCap="square",n.beginPath();for(let e=0;e<a;e++)for(let t=0;t<r;t++){const i=t*o,l=e*o;d[e][t][0]||(n.moveTo(i,l),n.lineTo(i+o,l)),d[e][t][3]||(n.moveTo(i,l),n.lineTo(i,l+o)),e!==a-1||d[e][t][2]||(n.moveTo(i,l+o),n.lineTo(i+o,l+o)),t!==r-1||d[e][t][1]||(n.moveTo(i+o,l),n.lineTo(i+o,l+o))}n.stroke()}let h;u(),m(),window.addEventListener("resize",()=>{clearTimeout(h),h=setTimeout(()=>{t();for(let e=0;e<a;e++)for(let t=0;t<r;t++)c[e]&&(c[e][t]=!1),d[e]&&(d[e][t]=[!1,!1,!1,!1]);u(),m()},200)},{passive:!0})}(),function(){const e=document.getElementById("particles");if(e)for(let t=0;t<38;t++){const t=document.createElement("div");t.className="particle",t.style.cssText=`\n            left: ${100*Math.random()}%;\n            --dur:   ${7+11*Math.random()}s;\n            --delay: ${14*-Math.random()}s;\n            --drift: ${100*(Math.random()-.5)}px;\n        `,e.appendChild(t)}}();const nav=document.getElementById("nav"),navToggle=document.getElementById("navToggle"),navLinks=nav.querySelector(".nav-links");window.addEventListener("scroll",()=>{nav.classList.toggle("scrolled",window.scrollY>60)},{passive:!0}),navToggle.addEventListener("click",()=>navLinks.classList.toggle("open")),navLinks.querySelectorAll("a").forEach(e=>e.addEventListener("click",()=>navLinks.classList.remove("open")));const revealObs=new IntersectionObserver(e=>{e.forEach(e=>{if(!e.isIntersecting)return;const t=[...e.target.parentElement.querySelectorAll(".reveal")].indexOf(e.target);e.target.style.transitionDelay=.07*t+"s",e.target.classList.add("visible"),revealObs.unobserve(e.target)})},{threshold:.1});async function handleMailingSubmit(e,t){e.preventDefault();const n=e.target,o=n.querySelector('input[type="email"]'),r=o.value,a=document.getElementById(t);try{const e=await fetch("/api/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:r})});e.ok||409===e.status?(o.value="",o.disabled=!0,n.querySelectorAll("button").forEach(e=>e.disabled=!0),a&&a.classList.add("show")):(o.setCustomValidity("Something went wrong, try again."),o.reportValidity(),o.setCustomValidity(""))}catch{o.setCustomValidity("Something went wrong, try again."),o.reportValidity(),o.setCustomValidity("")}}document.querySelectorAll(".reveal").forEach(e=>revealObs.observe(e)),function(){const e=document.getElementById("maze-counter");if(!e)return;let t=parseInt(e.textContent.replace(/,/g,""),10)||8673;setTimeout(function n(){t+=Math.floor(4*Math.random())+1,e.textContent=t.toLocaleString("en-GB"),e.classList.add("tick"),setTimeout(()=>e.classList.remove("tick"),320),setTimeout(n,2e3+3e3*Math.random())},1800)}(),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",t=>{const n=document.querySelector(e.getAttribute("href"));if(!n)return;t.preventDefault();const o=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--nav-h"))||72;window.scrollTo({top:n.getBoundingClientRect().top+window.scrollY-o,behavior:"smooth"})})});
+/* ============================================================
+   INTO THE MAZE GAMES — index.js
+============================================================ */
+
+/* ──────────────────────────────────────────────────────────
+   1. SEAMLESS SCROLLING MAZE BACKGROUND (toroidal)
+────────────────────────────────────────────────────────── */
+(function infiniteMaze() {
+    const display = document.getElementById('mazeCanvas');
+    if (!display) return;
+
+    const CELL  = 32;
+    const SPEED = 0.18;
+    const COLOR = 'rgba(196, 92, 26, 0.9)';
+
+    const DR  = [-1, 0, 1, 0];
+    const DC  = [ 0, 1, 0, -1];
+    const OPP = [ 2, 3, 0,  1];
+
+    let cols, rows, walls, tileW, tileH;
+    let off, octx, ctx;
+    let ox = 0, oy = 0;
+    let raf = null;
+
+    function buildToroidalMaze() {
+        walls = Array.from({length: rows}, () =>
+            Array.from({length: cols}, () => new Uint8Array(4))
+        );
+        const vis = Array.from({length: rows}, () => new Uint8Array(cols));
+        const sr = Math.floor(Math.random() * rows);
+        const sc = Math.floor(Math.random() * cols);
+        const stack = [[sr, sc]];
+        vis[sr][sc] = 1;
+        while (stack.length) {
+            const [r, c] = stack[stack.length - 1];
+            const cand = [];
+            for (let d = 0; d < 4; d++) {
+                const nr = (r + DR[d] + rows) % rows;
+                const nc = (c + DC[d] + cols) % cols;
+                if (!vis[nr][nc]) cand.push(d);
+            }
+            if (!cand.length) { stack.pop(); continue; }
+            const d  = cand[Math.floor(Math.random() * cand.length)];
+            const nr = (r + DR[d] + rows) % rows;
+            const nc = (c + DC[d] + cols) % cols;
+            walls[r][c][d] = 1; walls[nr][nc][OPP[d]] = 1;
+            vis[nr][nc] = 1;
+            stack.push([nr, nc]);
+        }
+    }
+
+    function drawTile(cx, offX, offY) {
+        cx.beginPath();
+        for (let r = 0; r < rows; r++) {
+            for (let c = 0; c < cols; c++) {
+                const x = offX + c * CELL, y = offY + r * CELL;
+                if (!walls[r][c][0]) { cx.moveTo(x, y); cx.lineTo(x + CELL, y); }
+                if (!walls[r][c][3]) { cx.moveTo(x, y); cx.lineTo(x, y + CELL); }
+            }
+        }
+        cx.stroke();
+    }
+
+    function buildBuffer() {
+        off = document.createElement('canvas');
+        off.width = tileW * 2; off.height = tileH * 2;
+        octx = off.getContext('2d');
+        octx.strokeStyle = COLOR; octx.lineWidth = 1; octx.lineCap = 'square';
+        drawTile(octx, 0,     0);
+        drawTile(octx, tileW, 0);
+        drawTile(octx, 0,     tileH);
+        drawTile(octx, tileW, tileH);
+    }
+
+    function init() {
+        display.width  = window.innerWidth;
+        display.height = window.innerHeight;
+        ctx = display.getContext('2d');
+        cols  = Math.ceil(window.innerWidth  / CELL) + 2;
+        rows  = Math.ceil(window.innerHeight / CELL) + 2;
+        tileW = cols * CELL;
+        tileH = rows * CELL;
+        buildToroidalMaze();
+        buildBuffer();
+        ox = Math.random() * tileW;
+        oy = Math.random() * tileH;
+    }
+
+    function tick() {
+        ox += SPEED; oy += SPEED;
+        if (ox >= tileW) ox -= tileW;
+        if (oy >= tileH) oy -= tileH;
+        ctx.clearRect(0, 0, display.width, display.height);
+        ctx.drawImage(off, -ox, -oy);
+        raf = requestAnimationFrame(tick);
+    }
+
+    function start() { if (raf === null) raf = requestAnimationFrame(tick); }
+    function stop()  { if (raf !== null) { cancelAnimationFrame(raf); raf = null; } }
+
+    init();
+    start();
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) stop(); else start();
+    });
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => { stop(); init(); start(); }, 200);
+    }, { passive: true });
+})();
+
+
+/* ──────────────────────────────────────────────────────────
+   2. NAV — scroll class + mobile toggle
+────────────────────────────────────────────────────────── */
+const nav       = document.getElementById('nav');
+const navToggle = document.getElementById('navToggle');
+const navLinks  = nav.querySelector('.nav-links');
+
+window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a =>
+    a.addEventListener('click', () => navLinks.classList.remove('open'))
+);
+
+
+/* ──────────────────────────────────────────────────────────
+   3. SCROLL REVEAL
+────────────────────────────────────────────────────────── */
+const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const siblings = [...entry.target.parentElement.querySelectorAll('.reveal')];
+        const idx = siblings.indexOf(entry.target);
+        entry.target.style.transitionDelay = `${idx * 0.07}s`;
+        entry.target.classList.add('visible');
+        revealObs.unobserve(entry.target);
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+
+/* ──────────────────────────────────────────────────────────
+   4. MAILING LIST FORMS (with API submit from friend's version)
+────────────────────────────────────────────────────────── */
+async function handleMailingSubmit(e, successId) {
+    e.preventDefault();
+    const form  = e.target;
+    const input = form.querySelector('input[type="email"]');
+    const email = input.value;
+    const msg   = document.getElementById(successId);
+
+    try {
+        const res = await fetch('/api/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        if (res.ok || res.status === 409) {
+            input.value = '';
+            input.disabled = true;
+            form.querySelectorAll('button').forEach(b => b.disabled = true);
+            if (msg) msg.classList.add('show');
+        } else {
+            input.setCustomValidity('Something went wrong, try again.');
+            input.reportValidity();
+            input.setCustomValidity('');
+        }
+    } catch {
+        input.setCustomValidity('Something went wrong, try again.');
+        input.reportValidity();
+        input.setCustomValidity('');
+    }
+}
+
+
+/* ──────────────────────────────────────────────────────────
+   5. MAZE COUNTER
+────────────────────────────────────────────────────────── */
+(function mazeCounter() {
+    const el = document.getElementById('maze-counter');
+    if (!el) return;
+    let count = parseInt(el.textContent.replace(/,/g, ''), 10) || 8673;
+    function tick() {
+        count += Math.floor(Math.random() * 4) + 1;
+        el.textContent = count.toLocaleString('en-GB');
+        el.classList.add('tick');
+        setTimeout(() => el.classList.remove('tick'), 320);
+        setTimeout(tick, 2000 + Math.random() * 3000);
+    }
+    setTimeout(tick, 1800);
+})();
+
+
+/* ──────────────────────────────────────────────────────────
+   6. FOOTER YEAR
+────────────────────────────────────────────────────────── */
+const yearEl = document.getElementById('year');
+if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+
+/* ──────────────────────────────────────────────────────────
+   7. SMOOTH SCROLL
+────────────────────────────────────────────────────────── */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (!target) return;
+        e.preventDefault();
+        const navH = parseInt(
+            getComputedStyle(document.documentElement).getPropertyValue('--nav-h')
+        ) || 72;
+        window.scrollTo({
+            top: target.getBoundingClientRect().top + window.scrollY - navH,
+            behavior: 'smooth'
+        });
+    });
+});
