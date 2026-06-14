@@ -110,37 +110,33 @@
     </section>
 
     <section class="section mailing-section" id="mailing">
-        <div class="container">
-            <div class="mailing-hero reveal">
-                <div class="mailing-glyph" aria-hidden="true">
-                    <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
-                        <g stroke="#c45c1a" stroke-width="1.5" fill="none" opacity="0.9">
-                            <rect x="4" y="4" width="72" height="72"/>
-                            <rect x="18" y="18" width="44" height="44"/>
-                            <line x1="4"  y1="40" x2="18" y2="40"/>
-                            <line x1="62" y1="40" x2="76" y2="40"/>
-                            <line x1="40" y1="4"  x2="40" y2="18"/>
-                            <line x1="40" y1="62" x2="40" y2="76"/>
-                            <circle cx="40" cy="40" r="8" stroke="#e8822a"/>
-                        </g>
-                    </svg>
-                </div>
-                <h2 class="mailing-title">Enter the maze.</h2>
-                <p class="mailing-sub">Dev logs, release news, playtest invites, and early access — delivered before anyone else finds the exit.</p>
-                <form class="mailing-form-big" id="mailingFormBig" onsubmit="handleMailingSubmit(event, 'mailingSuccessBig')">
-                    <div class="mailing-big-group">
-                        <input type="email" placeholder="your@email.com" required aria-label="Email address"/>
-                        <button type="submit">
-                            <span>Subscribe</span>
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                    </div>
-                    <p class="mailing-note">Get your maze a day.</p>
-                    <p class="mailing-success" id="mailingSuccessBig">You're in the maze now. ✦</p>
-                </form>
+    <div class="container">
+        <div class="mailing-hero reveal">
+            
+            <div class="mailing-glyph" aria-hidden="true">
+                <img src="assets/icon_nobg.png" alt="" width="160" height="160" />
             </div>
+
+            <h2 class="mailing-title">Enter the maze.</h2>
+            <p class="mailing-sub">
+                Dev logs, release news, playtest invites, and early access — delivered before anyone else finds the exit.
+            </p>
+
+            <form class="mailing-form-big" id="mailingFormBig" onsubmit="handleMailingSubmit(event, 'mailingSuccessBig')">
+                <div class="mailing-big-group">
+                    <input type="email" placeholder="your@email.com" required aria-label="Email address"/>
+                    <button type="submit">
+                        <span>Subscribe</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+                <p class="mailing-note">Get your maze a day.</p>
+                <p class="mailing-success" id="mailingSuccessBig">You're in the maze now. ✦</p>
+            </form>
+
         </div>
-    </section>
+    </div>
+</section>
 
     <section class="section contact" id="contact">
         <div class="container">
